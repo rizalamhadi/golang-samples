@@ -12,33 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package trsnip contains snippet code for the Translate API.
-// The code is not runnable.
-package trsnip
+package snippets
 
 import (
 	"context"
 	"fmt"
-	"log"
+	"io"
 
 	"cloud.google.com/go/translate"
 	"golang.org/x/text/language"
 	"google.golang.org/api/option"
 )
 
-func createClientWithKey() {
+func createClientWithKey(w io.Writer) error {
 	ctx := context.Background()
 
 	const apiKey = "YOUR_TRANSLATE_API_KEY"
 	client, err := translate.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("translate.NewClient: %v", err)
 	}
 
 	resp, err := client.Translate(ctx, []string{"Hello, world!"}, language.Russian, nil)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Translate: %v", err)
 	}
 
-	fmt.Printf("%#v", resp)
+	fmt.Fprintf(w, "%#v", resp)
+	return nil
 }
